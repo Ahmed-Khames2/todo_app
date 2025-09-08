@@ -1,0 +1,7 @@
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/productivity (1).png"
+
+  # flutter pub run flutter_launcher_icons:main -f flutter_launcher_icons.yaml
+

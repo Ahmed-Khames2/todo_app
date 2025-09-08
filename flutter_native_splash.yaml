@@ -1,0 +1,14 @@
+flutter_native_splash:
+  android: true
+  ios: true
+
+  color: "#FFFFFF"          # لون الخلفية في اللايت
+  color_dark: "#121212"     # لون الخلفية في الدارك
+
+  image: assets/icons/productivity (1).png
+  image_dark: assets/icons/productivity (1).png
+
+  android_12:
+    image: assets/icons/productivity (1).png
+    icon_background_color: "#42A5F5"
+    icon_background_color_dark: "#1565C0"
