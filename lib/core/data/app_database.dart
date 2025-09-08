@@ -16,8 +16,9 @@ class AppDatabase {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // زودنا النسخة
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade, // ضفنا onUpgrade
     );
   }
 
@@ -26,10 +27,18 @@ class AppDatabase {
       CREATE TABLE tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
+        description TEXT,
         isDone INTEGER NOT NULL,
         category TEXT NOT NULL,
         createdAt TEXT NOT NULL
       )
     ''');
+  }
+
+  static Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // نضيف عمود description لو مش موجود
+      await db.execute('ALTER TABLE tasks ADD COLUMN description TEXT');
+    }
   }
 }

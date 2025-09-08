@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/features/home/presentation/pages/home_page.dart';
+import 'package:todo_app/features/home/pages/home_page.dart';
 import 'package:todo_app/features/layout/base_layout.dart';
 import 'package:todo_app/features/settings/settings_page.dart';
-import '../../features/tasks/presentation/tasks_page.dart';
+import '../../features/tasks/pages/tasks_page.dart';
 
 class AppRoutes {
   // أسماء الراوتات

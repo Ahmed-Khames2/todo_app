@@ -1,7 +1,5 @@
-// lib/models/task_model.dart
-
 class TaskModel {
-  final String id;
+  final int? id;
   final String title;
   final String? description;
   final DateTime date;
@@ -9,7 +7,7 @@ class TaskModel {
   final String category;
 
   TaskModel({
-    required this.id,
+    this.id,
     required this.title,
     this.description,
     required this.date,
@@ -17,33 +15,30 @@ class TaskModel {
     required this.category,
   });
 
-  // تحويل من Map (مفيد للتخزين في SharedPreferences أو Firebase)
   factory TaskModel.fromMap(Map<String, dynamic> map) {
     return TaskModel(
-      id: map['id'] as String,
+      id: map['id'] as int?,
       title: map['title'] as String,
       description: map['description'] as String?,
-      date: DateTime.parse(map['date'] as String),
-      isDone: map['isDone'] as bool,
+      date: DateTime.parse(map['createdAt'] as String),
+      isDone: (map['isDone'] as int) == 1,
       category: map['category'] as String,
     );
   }
 
-  // تحويل لكائن Map (للتخزين أو الإرسال)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
       'description': description,
-      'date': date.toIso8601String(),
-      'isDone': isDone,
+      'createdAt': date.toIso8601String(),
+      'isDone': isDone ? 1 : 0,
       'category': category,
     };
   }
 
-  // نسخة جديدة مع تعديلات (مفيد في الكيوبت)
   TaskModel copyWith({
-    String? id,
+    int? id,
     String? title,
     String? description,
     DateTime? date,

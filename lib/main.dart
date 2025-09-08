@@ -2,17 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/constant/app_constant.dart';
+import 'package:todo_app/core/cubit/tasks_cubit.dart';
+import 'package:todo_app/core/data/task_repository.dart';
 import 'package:todo_app/core/navigation/app_router.dart';
 import 'package:todo_app/core/theme/app_theme.dart';
 import 'package:todo_app/core/theme/bloc/theme_bloc.dart';
-import 'package:todo_app/features/home/presentation/pages/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    BlocProvider(
-      create: (context) => ThemeBloc()..add(GetCuurrentThemeEvent()),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ThemeBloc()..add(GetCuurrentThemeEvent()),
+        ),
+        BlocProvider(
+      create: (context) => TasksCubit(TaskRepository())..fetchTasks(), // ✅ كده صح
+        ),
+      ],
       child: const TodoApp(),
     ),
   );
@@ -32,13 +40,11 @@ class TodoApp extends StatelessWidget {
             ThemeData lightTheme = appThemeData[AppTheme.todoLight]!;
             ThemeData darkTheme = appThemeData[AppTheme.todoDark]!;
 
-            // تحديد themeMode حسب الـ Bloc
-            ThemeMode themeMode = ThemeMode.system; // default
+            ThemeMode themeMode = ThemeMode.system;
             if (state is LoadingThemeState) {
-              themeMode =
-                  state.appTheme == AppTheme.todoLight
-                      ? ThemeMode.light
-                      : ThemeMode.dark;
+              themeMode = state.appTheme == AppTheme.todoLight
+                  ? ThemeMode.light
+                  : ThemeMode.dark;
             }
 
             return MaterialApp(
@@ -53,7 +59,7 @@ class TodoApp extends StatelessWidget {
           },
         );
       },
-      child: const SizedBox(), // مش محتاجين child دلوقتي
+      child: const SizedBox(),
     );
   }
 }

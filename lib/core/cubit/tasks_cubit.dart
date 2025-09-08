@@ -1,3 +1,4 @@
+// lib/cubit/tasks_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todo_app/core/data/task_repository.dart';
@@ -20,28 +21,38 @@ class TasksCubit extends Cubit<TasksState> {
       emit(TasksError("فشل في جلب المهام: $e"));
     }
   }
-
   // إضافة مهمة
   Future<void> addTask(TaskModel task) async {
     await repository.addTask(task);
-    fetchTasks();
+    await fetchTasks();
   }
 
   // تعديل مهمة
   Future<void> updateTask(TaskModel task) async {
     await repository.updateTask(task);
-    fetchTasks();
+    await fetchTasks();
   }
-
   // حذف مهمة
-  Future<void> deleteTask(int id) async {
-    await repository.deleteTask(id);
-    fetchTasks();
-  }
-
+ Future<void> deleteTask(int id) async {
+  await repository.deleteTask(id);
+  await fetchTasks();
+}
   // حذف الكل
   Future<void> deleteAllTasks() async {
     await repository.deleteAllTasks();
-    fetchTasks();
+    await fetchTasks();
   }
+  Future<void> toggleTask(int id) async {
+  try {
+    if (state is TasksLoaded) {
+      final currentTasks = (state as TasksLoaded).tasks;
+      final task = currentTasks.firstWhere((t) => t.id == id);
+      final updatedTask = task.copyWith(isDone: !task.isDone);
+      await repository.updateTask(updatedTask);
+      await fetchTasks();
+    }
+  } catch (e) {
+    emit(TasksError("فشل في تحديث حالة المهمة: $e"));
+  }
+}
 }

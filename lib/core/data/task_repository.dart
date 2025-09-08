@@ -6,7 +6,7 @@ class TaskRepository {
   // إضافة مهمة جديدة
   Future<int> addTask(TaskModel task) async {
     final db = await AppDatabase.database;
-    return await db.insert(
+    return await db.insert(//ex here 
       'tasks',
       task.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
