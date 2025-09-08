@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/constant/app_style.dart';
 import 'package:todo_app/core/cubit/tasks_cubit.dart';
-import 'package:todo_app/features/tasks/widgets/tasks_list.dart';
 import 'package:todo_app/core/widgets/add_task_button.dart';
+import 'package:todo_app/features/add_task_page.dart';
+import 'package:todo_app/features/tasks/widgets/tasks_list.dart';
+import 'package:todo_app/model/task_model.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -14,29 +16,42 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  final Set<String> selectedTasks = {};
+  final Set<TaskModel> selectedTasks = {};
+  bool multiSelectMode = false; // 👈 لو وضع الاختيار المتعدد مفعل
 
-  void toggleSelection(int id) {
-    final idStr = id.toString();
+  void toggleSelection(TaskModel task) {
     setState(() {
-      selectedTasks.contains(idStr)
-          ? selectedTasks.remove(idStr)
-          : selectedTasks.add(idStr);
+      selectedTasks.contains(task)
+          ? selectedTasks.remove(task)
+          : selectedTasks.add(task);
+      if (selectedTasks.isEmpty) multiSelectMode = false; // لو مفيش مهام محددة
     });
   }
 
-  void selectAll(List<int> ids) =>
-      setState(() => selectedTasks.addAll(ids.map((e) => e.toString())));
+  void selectAllOrClear(List<TaskModel> tasks) {
+    setState(() {
+      if (selectedTasks.length == tasks.length) {
+        selectedTasks.clear();
+        multiSelectMode = false;
+      } else {
+        selectedTasks.addAll(tasks);
+        multiSelectMode = true;
+      }
+    });
+  }
 
-  void clearSelection() => setState(() => selectedTasks.clear());
+  void clearSelection() => setState(() {
+        selectedTasks.clear();
+        multiSelectMode = false;
+      });
 
   void deleteSelectedTasks(BuildContext context) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('تأكيد الحذف'),
-        content:
-            Text('هل أنت متأكد أنك تريد حذف ${selectedTasks.length} مهمة؟'),
+        content: Text(
+            'هل أنت متأكد أنك تريد حذف ${selectedTasks.length} مهمة؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -52,9 +67,8 @@ class _TasksPageState extends State<TasksPage> {
     );
 
     if (confirm == true) {
-      for (var idStr in selectedTasks) {
-        final id = int.parse(idStr);
-        context.read<TasksCubit>().deleteTask(id);
+      for (var task in selectedTasks) {
+        context.read<TasksCubit>().deleteTask(task.id!);
       }
       clearSelection();
     }
@@ -68,7 +82,7 @@ class _TasksPageState extends State<TasksPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(90.h),
+            preferredSize: Size.fromHeight(100.h),
             child: AppBar(
               backgroundColor: theme.colorScheme.primary,
               shape: RoundedRectangleBorder(
@@ -88,13 +102,33 @@ class _TasksPageState extends State<TasksPage> {
                   ),
                 ),
               ),
-              actions: selectedTasks.isNotEmpty
+              actions: multiSelectMode
                   ? [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          if (selectedTasks.length == 1) {
+                            final task = selectedTasks.first;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => AddTaskPage(editTask: task),
+                              ),
+                            ).then((_) => clearSelection()); // 👈 بعد التعديل مسح التحديد
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      "اختار مهمة واحدة فقط للتعديل")),
+                            );
+                          }
+                        },
+                      ),
                       IconButton(
                         icon: const Icon(Icons.select_all),
                         onPressed: () {
                           if (state is TasksLoaded) {
-                            selectAll(state.tasks.map((t) => t.id!).toList());
+                            selectAllOrClear(state.tasks);
                           }
                         },
                       ),
@@ -108,10 +142,20 @@ class _TasksPageState extends State<TasksPage> {
           ),
           body: TasksList(
             state: state,
-            selectedTasks: selectedTasks,
-            onToggleSelection: toggleSelection,
+            selectedTasks:
+                selectedTasks.map((e) => e.id.toString()).toSet(),
+            multiSelectMode: multiSelectMode,
+            onLongPressSelection: (task) {
+              setState(() {
+                multiSelectMode = true;
+              });
+              toggleSelection(task);
+            },
+            onTapSelection: (task) {
+              if (multiSelectMode) toggleSelection(task);
+            },
           ),
-          floatingActionButton: AddTaskButton(),
+          floatingActionButton: const AddTaskButton(),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         );
       },

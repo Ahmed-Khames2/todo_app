@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/core/cubit/tasks_cubit.dart';
 import 'package:todo_app/model/task_model.dart';
+import '../core/cubit/tasks_cubit.dart';
+// import '../core/data/task_model.dart';
 
 class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
+  final TaskModel? editTask;
+  const AddTaskPage({super.key, this.editTask});
 
   @override
   State<AddTaskPage> createState() => _AddTaskPageState();
@@ -12,24 +14,36 @@ class AddTaskPage extends StatefulWidget {
 
 class _AddTaskPageState extends State<AddTaskPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
   DateTime? _selectedDate;
   String? _selectedCategory;
 
-  final List<String> categories = ['الكل', 'عمل', 'دراسة', 'شخصي'];
+  final List<String> categories = ['عمل', 'دراسة', 'تسوق', 'أخرى'];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.editTask != null) {
+      _titleController = TextEditingController(text: widget.editTask!.title);
+      _descriptionController =
+          TextEditingController(text: widget.editTask!.description);
+      _selectedDate = widget.editTask!.date;
+      _selectedCategory = widget.editTask!.category;
+    } else {
+      _titleController = TextEditingController();
+      _descriptionController = TextEditingController();
+    }
+  }
 
   void _pickDate() async {
-    final now = DateTime.now();
     final date = await showDatePicker(
       context: context,
-      initialDate: now,
-      firstDate: now,
-      lastDate: DateTime(now.year + 5),
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
     );
-    if (date != null) {
-      setState(() => _selectedDate = date);
-    }
+    if (date != null) setState(() => _selectedDate = date);
   }
 
   void _saveTask() {
@@ -37,80 +51,69 @@ class _AddTaskPageState extends State<AddTaskPage> {
         _selectedDate != null &&
         _selectedCategory != null) {
       final task = TaskModel(
-        id: DateTime.now().millisecondsSinceEpoch,
+        id: widget.editTask?.id ?? DateTime.now().millisecondsSinceEpoch,
         title: _titleController.text,
         description: _descriptionController.text,
         date: _selectedDate!,
         category: _selectedCategory!,
-        isDone: false,
+        isDone: widget.editTask?.isDone ?? false,
       );
 
-      context.read<TasksCubit>().addTask(task);
+      if (widget.editTask != null) {
+        context.read<TasksCubit>().updateTask(task);
+      } else {
+        context.read<TasksCubit>().addTask(task);
+      }
+
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("أكمل كل البيانات قبل الحفظ")),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("أكمل كل البيانات")));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("إضافة مهمة")),
+      appBar: AppBar(title: Text(widget.editTask != null ? 'تعديل المهمة' : 'إضافة مهمة')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(labelText: "عنوان المهمة"),
-                validator: (val) =>
-                    val == null || val.isEmpty ? "أدخل عنوان المهمة" : null,
+                decoration: const InputDecoration(labelText: 'العنوان'),
+                validator: (val) => val == null || val.isEmpty ? 'ادخل العنوان' : null,
               ),
-              const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: "وصف المهمة"),
-                validator: (val) =>
-                    val == null || val.isEmpty ? "أدخل وصف المهمة" : null,
+                decoration: const InputDecoration(labelText: 'الوصف'),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: "الفئة"),
-                items: categories
-                    .map((cat) => DropdownMenuItem(
-                          value: cat,
-                          child: Text(cat),
-                        ))
-                    .toList(),
                 value: _selectedCategory,
+                items: categories
+                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                    .toList(),
                 onChanged: (val) => setState(() => _selectedCategory = val),
-                validator: (val) => val == null ? "اختر الفئة" : null,
+                decoration: const InputDecoration(labelText: 'الفئة'),
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? "اختر تاريخ"
-                          : "التاريخ: ${_selectedDate!.toLocal()}".split(' ')[0],
-                    ),
-                  ),
-                  ElevatedButton(
+                  Text(_selectedDate != null
+                      ? 'التاريخ: ${_selectedDate!.toLocal()}'.split(' ')[0]
+                      : 'اختر التاريخ'),
+                  IconButton(
+                    icon: const Icon(Icons.calendar_today),
                     onPressed: _pickDate,
-                    child: const Text("اختيار التاريخ"),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saveTask,
-                child: const Text("حفظ المهمة"),
-              ),
+              ElevatedButton(onPressed: _saveTask, child: const Text('حفظ')),
             ],
           ),
         ),
