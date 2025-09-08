@@ -5,8 +5,8 @@ import 'package:todo_app/core/theme/app_theme.dart';
 import 'package:todo_app/core/theme/bloc/theme_bloc.dart';
 
 /// صفحة الإعدادات لتغيير الثيم.
-class SettingPage extends StatelessWidget {
-  const SettingPage({super.key});
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/constant/app_constant.dart';
+import 'package:todo_app/core/navigation/app_router.dart';
 import 'package:todo_app/core/theme/app_theme.dart';
 import 'package:todo_app/core/theme/bloc/theme_bloc.dart';
-import 'package:todo_app/features/todo/presentation/pages/testpage.dart';
+import 'package:todo_app/features/home/presentation/pages/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,9 +35,10 @@ class TodoApp extends StatelessWidget {
             // تحديد themeMode حسب الـ Bloc
             ThemeMode themeMode = ThemeMode.system; // default
             if (state is LoadingThemeState) {
-              themeMode = state.appTheme == AppTheme.todoLight
-                  ? ThemeMode.light
-                  : ThemeMode.dark;
+              themeMode =
+                  state.appTheme == AppTheme.todoLight
+                      ? ThemeMode.light
+                      : ThemeMode.dark;
             }
 
             return MaterialApp(
@@ -45,12 +47,13 @@ class TodoApp extends StatelessWidget {
               theme: lightTheme,
               darkTheme: darkTheme,
               themeMode: themeMode,
-              home: child,
+              onGenerateRoute: AppRoutes.generateRoute,
+              initialRoute: AppRoutes.layout,
             );
           },
         );
       },
-      child: const SettingPage(), // مؤقتًا للتجربة
+      child: const SizedBox(), // مش محتاجين child دلوقتي
     );
   }
 }

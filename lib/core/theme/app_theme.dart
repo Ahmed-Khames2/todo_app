@@ -11,6 +11,7 @@ enum AppTheme {
 
 final appThemeData = {
   AppTheme.todoLight: ThemeData(
+    fontFamily: 'Cairo', // <<-- اضفنا هنا الفونت
     useMaterial3: true,
     brightness: Brightness.light,
     colorScheme: ColorScheme.light(
@@ -71,6 +72,7 @@ final appThemeData = {
 
   AppTheme.todoDark: ThemeData(
     useMaterial3: true,
+    fontFamily: 'Cairo', // <<-- اضفنا هنا الفونت
     brightness: Brightness.dark,
     colorScheme: ColorScheme.dark(
       primary: AppColors.darkPrimary,
