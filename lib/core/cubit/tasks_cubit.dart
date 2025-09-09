@@ -2,7 +2,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todo_app/core/data/task_repository.dart';
-import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/core/data/model/task_model.dart';
 
 part 'tasks_state.dart';
 

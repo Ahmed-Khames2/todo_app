@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/cubit/tasks_cubit.dart';
-import 'package:todo_app/core/widgets/task_card.dart';
-import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/core/data/model/task_model.dart';
+import 'package:todo_app/features/home/widgets/task_card_home.dart';
 
 import 'empty_tasks.dart';
 
@@ -51,15 +51,16 @@ class TasksList extends StatelessWidget {
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               final task = tasks[index];
-              return TaskCard(
+              return TaskCardHome(
                 title: task.title,
+                description: task.description, // 👈 أضفنا دي
+
                 isDone: task.isDone,
                 onChanged: (val) {
                   context.read<TasksCubit>().updateTask(
                     task.copyWith(isDone: val ?? false),
                   );
                 },
-                
               );
             },
           );

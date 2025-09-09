@@ -6,7 +6,7 @@ import 'package:todo_app/core/cubit/tasks_cubit.dart';
 import 'package:todo_app/core/widgets/add_task_button.dart';
 import 'package:todo_app/features/addTask/add_task_page.dart';
 import 'package:todo_app/features/tasks/widgets/tasks_list.dart';
-import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/core/data/model/task_model.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});

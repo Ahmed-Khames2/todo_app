@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/core/data/app_database.dart';
-import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/core/data/model/task_model.dart';
 
 class TaskRepository {
   // إضافة مهمة جديدة

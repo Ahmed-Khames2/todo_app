@@ -8,7 +8,7 @@ import 'package:todo_app/features/addTask/widgets/CustomButton.dart';
 import 'package:todo_app/features/addTask/widgets/CustomDatePicker.dart';
 import 'package:todo_app/features/addTask/widgets/CustomDropdown.dart';
 import 'package:todo_app/features/addTask/widgets/CustomTextField.dart';
-import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/core/data/model/task_model.dart';
 
 class AddTaskPage extends StatelessWidget {
   final TaskModel? editTask;

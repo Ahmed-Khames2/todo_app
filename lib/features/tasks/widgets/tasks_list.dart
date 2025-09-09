@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/cubit/tasks_cubit.dart';
-import 'package:todo_app/core/widgets/task_card.dart';
-import 'package:todo_app/model/task_model.dart';
+import 'package:todo_app/core/data/model/task_model.dart';
+import 'package:todo_app/features/tasks/widgets/task_card_task.dart';
 
 class TasksList extends StatelessWidget {
   final TasksState state;
@@ -62,8 +62,10 @@ class TasksList extends StatelessWidget {
               color: isSelected ? Colors.blue.withOpacity(0.2) : null,
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: TaskCard(
+            child: TaskCardTask(
               title: task.title,
+                description: task.description, // 👈 أضفنا دي
+
               subtitle: task.date.toString(),
               isDone: task.isDone,
               onChanged: (val) {
