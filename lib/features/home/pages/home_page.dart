@@ -18,7 +18,19 @@ class _HomePageState extends State<HomePage> {
   String selectedCategory = 'الكل';
   String selectedFilter = 'الكل';
 
-  final List<String> categories = ['الكل', 'عمل', 'دراسة', 'شخصي'];
+final List<String> categories = [
+  'الكل',
+  'عمل',
+  'دراسة',
+  'شخصي',
+  'صحة / رياضة',
+  'عائلة',
+  'مالية',
+  'تسوق / مشتريات',
+  'مشاريع / أهداف',
+  'سفر / مناسبات',
+  'أعمال منزلية',
+];
   final List<String> filters = ['الكل', 'مكتملة', 'غير مكتملة'];
 
   @override
@@ -26,15 +38,17 @@ class _HomePageState extends State<HomePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         child: Column(
           children: [
-            SearchField(onChanged: (val) {
-              setState(() => searchQuery = val);
-            }),
-            SizedBox(height: 10.h),
+            SearchField(
+              onChanged: (val) {
+                setState(() => searchQuery = val);
+              },
+            ),
+            SizedBox(height: 12.h),
             CategoryFilter(
               categories: categories,
               filters: filters,
@@ -47,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() => selectedFilter = f);
               },
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 12.h),
             Expanded(
               child: TasksList(
                 searchQuery: searchQuery,
@@ -58,7 +72,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: AddTaskButton(),
+      floatingActionButton: const AddTaskButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

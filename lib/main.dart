@@ -7,6 +7,7 @@ import 'package:todo_app/core/data/task_repository.dart';
 import 'package:todo_app/core/navigation/app_router.dart';
 import 'package:todo_app/core/theme/app_theme.dart';
 import 'package:todo_app/core/theme/bloc/theme_bloc.dart';
+import 'package:todo_app/features/addTask/logic/cubit/add_task_cubit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,8 +19,11 @@ void main() {
           create: (context) => ThemeBloc()..add(GetCuurrentThemeEvent()),
         ),
         BlocProvider(
-      create: (context) => TasksCubit(TaskRepository())..fetchTasks(), // ✅ كده صح
+          create:
+              (context) =>
+                  TasksCubit(TaskRepository())..fetchTasks(), // ✅ كده صح
         ),
+        BlocProvider(create: (context) => AddTaskCubit()),
       ],
       child: const TodoApp(),
     ),
@@ -42,9 +46,10 @@ class TodoApp extends StatelessWidget {
 
             ThemeMode themeMode = ThemeMode.system;
             if (state is LoadingThemeState) {
-              themeMode = state.appTheme == AppTheme.todoLight
-                  ? ThemeMode.light
-                  : ThemeMode.dark;
+              themeMode =
+                  state.appTheme == AppTheme.todoLight
+                      ? ThemeMode.light
+                      : ThemeMode.dark;
             }
 
             return MaterialApp(

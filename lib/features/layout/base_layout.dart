@@ -15,23 +15,32 @@ class _BaseLayoutState extends State<BaseLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: widget.pages[_currentIndex],
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(bottom: 10.h), // رفعها شوية من تحت
+        padding: EdgeInsets.only(bottom: 8.h), // رفع بسيط من تحت
         child: ConvexAppBar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: theme.colorScheme.primary,
           activeColor: Colors.white,
-          color:
-              Theme.of(
-                context,
-              ).bottomNavigationBarTheme.unselectedItemColor, // اللون الغير نشط
-          height: 60.h,
+          color: theme.bottomNavigationBarTheme.unselectedItemColor,
+          height: 55.h,
+          curveSize: 70.r, // حجم الانحناء responsive
           style: TabStyle.react,
-          items: const [
-            TabItem(icon: Icons.home, title: 'الرئيسية'),
-            TabItem(icon: Icons.task, title: 'المهام'),
-            TabItem(icon: Icons.settings, title: 'الإعدادات'),
+          items: [
+            TabItem(
+              icon: Icons.home,
+              title: 'الرئيسية',
+            ),
+            TabItem(
+              icon: Icons.task,
+              title: 'المهام',
+            ),
+            TabItem(
+              icon: Icons.settings,
+              title: 'الإعدادات',
+            ),
           ],
           initialActiveIndex: _currentIndex,
           onTap: (index) {

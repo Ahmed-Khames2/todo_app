@@ -13,10 +13,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: theme.colorScheme.primary,
       elevation: 6,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(25.r)),
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(25.r),
+        ),
       ),
       flexibleSpace: Padding(
-        padding: EdgeInsets.only(left: 20.w, top: 40.h, right: 20.w),
+        padding: EdgeInsets.only(
+          left: 20.w,
+          right: 20.w,
+          top: 40.h,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -26,22 +32,31 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               children: [
                 Text(
                   'مرحباً بك،',
-                  style: AppStyle.heading.copyWith(color: Colors.white),
+                  style: AppStyle.heading.copyWith(
+                    fontSize: 20.sp,
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   'ابحث، صنف وارتب مهامك بسهولة',
                   style: AppStyle.body.copyWith(
-                    color: Colors.white70,
                     fontSize: 14.sp,
+                    color: Colors.white70,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
             CircleAvatar(
               radius: 22.r,
               backgroundColor: Colors.white,
-              child: Icon(Icons.person, color: theme.colorScheme.primary),
+              child: Icon(
+                Icons.person,
+                size: 22.sp,
+                color: theme.colorScheme.primary,
+              ),
             ),
           ],
         ),

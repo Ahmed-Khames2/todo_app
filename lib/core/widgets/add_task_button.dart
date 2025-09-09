@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/features/add_task_page.dart';
+import 'package:todo_app/features/addTask/add_task_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddTaskButton extends StatelessWidget {
@@ -15,11 +15,15 @@ class AddTaskButton extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const AddTaskPage()),
+            MaterialPageRoute(builder: (_) =>  AddTaskPage()),
           );
         },
         backgroundColor: theme.colorScheme.primary,
-        child: Icon(Icons.add, size: 28.sp, color: Colors.white),
+        child: Icon(
+          Icons.add,
+          size: 28.sp,
+          color: Colors.white,
+        ),
       ),
     );
   }

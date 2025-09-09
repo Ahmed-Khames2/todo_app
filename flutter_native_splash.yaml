@@ -2,13 +2,16 @@ flutter_native_splash:
   android: true
   ios: true
 
-  color: "#FFFFFF"          # لون الخلفية في اللايت
-  color_dark: "#121212"     # لون الخلفية في الدارك
+  # 🌞 Light Theme
+  color: "#4CAF50"          # lightBackground
+  image: assets/icons/productivity (2).png
 
-  image: assets/icons/productivity (1).png
-  image_dark: assets/icons/productivity (1).png
+  # 🌙 Dark Theme
+  color_dark: "#273F4F"      # darkPrimary
+  image_dark: assets/icons/productivity (3).png
 
   android_12:
-    image: assets/icons/productivity (1).png
-    icon_background_color: "#42A5F5"
-    icon_background_color_dark: "#1565C0"
+    image: assets/icons/productivity (2).png
+    image_dark: assets\icons\productivity (3).png
+    # icon_background_color: "#4CAF50"       # lightPrimary
+    # icon_background_color_dark: "#EFEFEF"  # darkTextPrimary

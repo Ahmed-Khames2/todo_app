@@ -35,16 +35,20 @@ class CategoryFilter extends StatelessWidget {
                 return Padding(
                   padding: EdgeInsets.only(right: 8.w),
                   child: ChoiceChip(
-                    label: Text(cat),
+                    label: Text(
+                      cat,
+                      style: AppStyle.body.copyWith(
+                        fontSize: 14.sp,
+                        color: isSelected
+                            ? Colors.white
+                            : theme.textTheme.bodyMedium?.color,
+                      ),
+                    ),
                     selected: isSelected,
                     onSelected: (_) => onCategoryChanged(cat),
                     selectedColor: theme.colorScheme.primary,
                     backgroundColor: theme.cardColor,
-                    labelStyle: AppStyle.body.copyWith(
-                      color: isSelected
-                          ? Colors.white
-                          : theme.textTheme.bodyMedium?.color,
-                    ),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 );
               }).toList(),
@@ -52,11 +56,23 @@ class CategoryFilter extends StatelessWidget {
           ),
         ),
         PopupMenuButton<String>(
-          icon: Icon(Icons.filter_alt, color: theme.iconTheme.color),
+          icon: Icon(
+            Icons.filter_alt,
+            color: theme.iconTheme.color,
+            size: 22.sp,
+          ),
           onSelected: onFilterChanged,
           itemBuilder: (context) {
             return filters
-                .map((f) => PopupMenuItem(value: f, child: Text(f)))
+                .map(
+                  (f) => PopupMenuItem(
+                    value: f,
+                    child: Text(
+                      f,
+                      style: TextStyle(fontSize: 14.sp),
+                    ),
+                  ),
+                )
                 .toList();
           },
         ),

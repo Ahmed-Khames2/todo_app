@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/cubit/tasks_cubit.dart';
 import 'package:todo_app/core/widgets/task_card.dart';
 import 'package:todo_app/model/task_model.dart';
@@ -23,13 +24,23 @@ class TasksList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state is! TasksLoaded) {
-      return const Center(child: Text("لا توجد مهام بعد"));
+      return Center(
+        child: Text(
+          "لا توجد مهام بعد",
+          style: TextStyle(fontSize: 16.sp),
+        ),
+      );
     }
 
     final tasks = (state as TasksLoaded).tasks;
 
     if (tasks.isEmpty) {
-      return const Center(child: Text("لا توجد مهام بعد"));
+      return Center(
+        child: Text(
+          "لا توجد مهام بعد",
+          style: TextStyle(fontSize: 16.sp),
+        ),
+      );
     }
 
     return ListView.builder(
@@ -46,10 +57,10 @@ class TasksList extends StatelessWidget {
             onLongPressSelection(task);
           },
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
+            margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
             decoration: BoxDecoration(
               color: isSelected ? Colors.blue.withOpacity(0.2) : null,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: TaskCard(
               title: task.title,

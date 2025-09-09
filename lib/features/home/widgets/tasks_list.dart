@@ -21,11 +21,13 @@ class TasksList extends StatelessWidget {
 
   List<TaskModel> applyFilters(List<TaskModel> tasks) {
     return tasks.where((task) {
-      final matchesSearch =
-          task.title.toLowerCase().contains(searchQuery.toLowerCase());
+      final matchesSearch = task.title.toLowerCase().contains(
+        searchQuery.toLowerCase(),
+      );
       final matchesCategory =
           selectedCategory == 'الكل' || task.category == selectedCategory;
-      final matchesFilter = selectedFilter == 'الكل' ||
+      final matchesFilter =
+          selectedFilter == 'الكل' ||
           (selectedFilter == 'مكتملة' && task.isDone) ||
           (selectedFilter == 'غير مكتملة' && !task.isDone);
 
@@ -54,9 +56,10 @@ class TasksList extends StatelessWidget {
                 isDone: task.isDone,
                 onChanged: (val) {
                   context.read<TasksCubit>().updateTask(
-                        task.copyWith(isDone: val ?? false),
-                      );
+                    task.copyWith(isDone: val ?? false),
+                  );
                 },
+                
               );
             },
           );
