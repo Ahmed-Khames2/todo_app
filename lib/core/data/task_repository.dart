@@ -13,14 +13,14 @@ class TaskRepository {
     );
   }
 
-  // جلب كل المهام
+  // get كل المهام
   Future<List<TaskModel>> getTasks() async {
     final db = await AppDatabase.database;
     final result = await db.query('tasks', orderBy: 'createdAt DESC');
     return result.map((e) => TaskModel.fromMap(e)).toList();
   }
 
-  // تحديث (تعديل) مهمة
+  // تحديث مهمة
   Future<int> updateTask(TaskModel task) async {
     final db = await AppDatabase.database;
     return await db.update(
@@ -41,7 +41,7 @@ class TaskRepository {
     );
   }
 
-  // حذف كل المهام (لو عايزين نستخدمها في الـ Clear All)
+  // حذف كل المهام 
   Future<int> deleteAllTasks() async {
     final db = await AppDatabase.database;
     return await db.delete('tasks');

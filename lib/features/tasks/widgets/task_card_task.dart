@@ -8,6 +8,7 @@ class TaskCardTask extends StatefulWidget {
   final String? subtitle;
   final String? description;
   final bool isDone;
+  final bool selected; // ✅ إضافة
   final void Function(bool?)? onChanged;
 
   const TaskCardTask({
@@ -17,6 +18,7 @@ class TaskCardTask extends StatefulWidget {
     this.description,
     required this.isDone,
     this.onChanged,
+    this.selected = false, // ✅ default = false
   });
 
   @override
@@ -24,7 +26,7 @@ class TaskCardTask extends StatefulWidget {
 }
 
 class _TaskCardTaskState extends State<TaskCardTask> {
-    bool expanded = false;
+  bool expanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +34,14 @@ class _TaskCardTaskState extends State<TaskCardTask> {
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-      child: Container(
-        decoration: AppStyle.cardDecoration(color: theme.cardColor),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        decoration: AppStyle.cardDecoration(
+          color: widget.selected
+              // ignore: deprecated_member_use
+              ? theme.colorScheme.primary.withOpacity(0.15) // ✅ لون مميز لو متعلم
+              : theme.cardColor,
+        ),
         child: Column(
           children: [
             ListTile(
@@ -52,6 +60,7 @@ class _TaskCardTaskState extends State<TaskCardTask> {
                 style: AppStyle.body.copyWith(
                   fontSize: 16.sp,
                   color: widget.isDone
+                      // ignore: deprecated_member_use
                       ? theme.textTheme.bodyMedium?.color?.withOpacity(0.6)
                       : theme.textTheme.bodyMedium?.color,
                   decoration:
@@ -64,11 +73,14 @@ class _TaskCardTaskState extends State<TaskCardTask> {
                           .format(DateTime.parse(widget.subtitle!)),
                       style: AppStyle.subHeading.copyWith(
                         fontSize: 14.sp,
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                        color:
+                            // ignore: deprecated_member_use
+                            theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
                       ),
                     )
                   : null,
-              trailing: widget.description != null && widget.description!.isNotEmpty
+              trailing: widget.description != null &&
+                      widget.description!.isNotEmpty
                   ? IconButton(
                       icon: AnimatedRotation(
                         turns: expanded ? 0.5 : 0,
@@ -83,9 +95,12 @@ class _TaskCardTaskState extends State<TaskCardTask> {
                     )
                   : null,
             ),
-            if (expanded && widget.description != null && widget.description!.isNotEmpty)
+            if (expanded &&
+                widget.description != null &&
+                widget.description!.isNotEmpty)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(

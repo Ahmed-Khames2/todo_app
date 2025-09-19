@@ -10,7 +10,7 @@ class AppColors {
   static const Color lightTextPrimary = Colors.black87;
   static const Color lightTextSecondary = Colors.black54;
 
-  // 🌙 Dark Theme Colors (هادية ودافئة)
+  // 🌙 Dark Theme Colors
   // static const Color darkPrimary = Color(0xFF6D4C41); // بني دافئ
   // static const Color darkSecondary = Color(0xFFD7CCC8); // بيج فاتح / ترابي
   // static const Color darkBackground = Color(0xFF2C2C2C); // رمادي داكن دافئ

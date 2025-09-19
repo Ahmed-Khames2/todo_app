@@ -31,73 +31,111 @@ class _TaskCardHomeState extends State<TaskCardHome> {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-      child: Container(
-        decoration: AppStyle.cardDecoration(color: theme.cardColor),
-        child: Column(
-          children: [
-            ListTile(
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 10.h,
-                horizontal: 15.w,
-              ),
-              leading: Checkbox(
-                value: widget.isDone,
-                onChanged: widget.onChanged,
-                activeColor: theme.colorScheme.primary,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              title: Text(
-                widget.title,
-                style: AppStyle.body.copyWith(
-                  fontSize: 16.sp,
-                  color: widget.isDone
-                      ? theme.textTheme.bodyMedium?.color?.withOpacity(0.6)
-                      : theme.textTheme.bodyMedium?.color,
-                  decoration:
-                      widget.isDone ? TextDecoration.lineThrough : null,
-                ),
-              ),
-              subtitle: widget.subtitle != null
-                  ? Text(
-                      DateFormat('yyyy-MM-dd')
-                          .format(DateTime.parse(widget.subtitle!)),
-                      style: AppStyle.subHeading.copyWith(
-                        fontSize: 14.sp,
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
+      child: Material(
+        elevation: 2,
+        borderRadius: BorderRadius.circular(16.r),
+        color: theme.cardColor,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.r),
+          onTap: widget.description != null && widget.description!.isNotEmpty
+              ? () => setState(() => expanded = !expanded)
+              : null,
+          child: Padding(
+            padding: EdgeInsets.all(12.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                      value: widget.isDone,
+                      onChanged: widget.onChanged,
+                      activeColor: theme.colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.r),
                       ),
-                    )
-                  : null,
-              trailing: widget.description != null && widget.description!.isNotEmpty
-                  ? IconButton(
-                      icon: AnimatedRotation(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.title,
+                            style: AppStyle.body.copyWith(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: widget.isDone
+                                  ? theme.textTheme.bodyMedium?.color
+                                      // ignore: deprecated_member_use
+                                      ?.withOpacity(0.6)
+                                  : theme.textTheme.bodyMedium?.color,
+                              decoration: widget.isDone
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                            ),
+                          ),
+                          if (widget.subtitle != null)
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today,
+                                  size: 14.sp,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  DateFormat('yyyy-MM-dd').format(
+                                    DateTime.parse(widget.subtitle!),
+                                  ),
+                                  style: AppStyle.subHeading.copyWith(
+                                    fontSize: 13.sp,
+                                    color: theme.textTheme.bodyMedium?.color
+                                        // ignore: deprecated_member_use
+                                        ?.withOpacity(0.6),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (widget.description != null &&
+                        widget.description!.isNotEmpty)
+                      AnimatedRotation(
                         turns: expanded ? 0.5 : 0,
-                        duration: const Duration(milliseconds: 200),
-                        child: const Icon(Icons.keyboard_arrow_down),
+                        duration: const Duration(milliseconds: 250),
+                        child: IconButton(
+                          icon: Icon(Icons.keyboard_arrow_down,
+                              color: theme.colorScheme.primary),
+                          onPressed: () =>
+                              setState(() => expanded = !expanded),
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          expanded = !expanded;
-                        });
-                      },
-                    )
-                  : null,
-            ),
-            if (expanded && widget.description != null && widget.description!.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    widget.description!,
-                    style: AppStyle.subHeading.copyWith(
-                      fontSize: 14.sp,
-                      color: theme.textTheme.bodyMedium?.color,
+                  ],
+                ),
+                AnimatedCrossFade(
+                  firstChild: const SizedBox.shrink(),
+                  secondChild: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+                    child: Text(
+                      widget.description ?? '',
+                      style: AppStyle.body.copyWith(
+                        fontSize: 14.sp,
+                        color: theme.textTheme.bodyMedium?.color,
+                      ),
                     ),
                   ),
+                  crossFadeState: expanded
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  duration: const Duration(milliseconds: 250),
                 ),
-              ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

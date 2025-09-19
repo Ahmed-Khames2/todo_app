@@ -26,7 +26,6 @@ class TasksCubit extends Cubit<TasksState> {
     await repository.addTask(task);
     await fetchTasks();
   }
-
   // تعديل مهمة
   Future<void> updateTask(TaskModel task) async {
     await repository.updateTask(task);
@@ -42,6 +41,7 @@ class TasksCubit extends Cubit<TasksState> {
     await repository.deleteAllTasks();
     await fetchTasks();
   }
+  
   Future<void> toggleTask(int id) async {
   try {
     if (state is TasksLoaded) {

@@ -15,17 +15,6 @@ class TaskModel {
     required this.category,
   });
 
-  factory TaskModel.fromMap(Map<String, dynamic> map) {
-    return TaskModel(
-      id: map['id'] as int?,
-      title: map['title'] as String,
-      description: map['description'] as String?,
-      date: DateTime.parse(map['createdAt'] as String),
-      isDone: (map['isDone'] as int) == 1,
-      category: map['category'] as String,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -35,6 +24,17 @@ class TaskModel {
       'isDone': isDone ? 1 : 0,
       'category': category,
     };
+  }
+
+  factory TaskModel.fromMap(Map<String, dynamic> map) {
+    return TaskModel(
+      id: map['id'] as int?,
+      title: map['title'] as String,
+      description: map['description'] as String?,
+      date: DateTime.parse(map['createdAt'] as String),
+      isDone: (map['isDone'] as int) == 1,
+      category: map['category'] as String,
+    );
   }
 
   TaskModel copyWith({

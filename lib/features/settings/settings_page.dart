@@ -57,6 +57,7 @@ class SettingsPage extends StatelessWidget {
                                     colors: [
                                       appThemeData[itemAppTheme]!.primaryColor,
                                       appThemeData[itemAppTheme]!.primaryColor
+                                          // ignore: deprecated_member_use
                                           .withOpacity(0.7),
                                     ],
                                     begin: Alignment.topLeft,
@@ -66,6 +67,7 @@ class SettingsPage extends StatelessWidget {
                             color: isSelected ? null : theme.cardColor,
                             boxShadow: [
                               BoxShadow(
+                                // ignore: deprecated_member_use
                                 color: Colors.black.withOpacity(0.2),
                                 blurRadius: 6.r,
                                 offset: Offset(0, 4.h),

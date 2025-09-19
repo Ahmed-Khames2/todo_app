@@ -25,10 +25,7 @@ class TasksList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state is! TasksLoaded) {
       return Center(
-        child: Text(
-          "لا توجد مهام بعد",
-          style: TextStyle(fontSize: 16.sp),
-        ),
+        child: Text("لا توجد مهام بعد", style: TextStyle(fontSize: 16.sp)),
       );
     }
 
@@ -36,10 +33,7 @@ class TasksList extends StatelessWidget {
 
     if (tasks.isEmpty) {
       return Center(
-        child: Text(
-          "لا توجد مهام بعد",
-          style: TextStyle(fontSize: 16.sp),
-        ),
+        child: Text("لا توجد مهام بعد", style: TextStyle(fontSize: 16.sp)),
       );
     }
 
@@ -59,12 +53,13 @@ class TasksList extends StatelessWidget {
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: isSelected ? Colors.blue.withOpacity(0.2) : null,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: TaskCardTask(
               title: task.title,
-                description: task.description, // 👈 أضفنا دي
+              description: task.description, // 👈 أضفنا دي
 
               subtitle: task.date.toString(),
               isDone: task.isDone,

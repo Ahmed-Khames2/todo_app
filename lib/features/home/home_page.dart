@@ -18,24 +18,24 @@ class _HomePageState extends State<HomePage> {
   String selectedCategory = 'الكل';
   String selectedFilter = 'الكل';
 
-final List<String> categories = [
-  'الكل',
-  'عمل',
-  'دراسة',
-  'شخصي',
-  'صحة / رياضة',
-  'عائلة',
-  'مالية',
-  'تسوق / مشتريات',
-  'مشاريع / أهداف',
-  'سفر / مناسبات',
-  'أعمال منزلية',
-];
+  final List<String> categories = [
+    'الكل',
+    'عمل',
+    'دراسة',
+    'شخصي',
+    'صحة / رياضة',
+    'عائلة',
+    'مالية',
+    'تسوق / مشتريات',
+    'مشاريع / أهداف',
+    'سفر / مناسبات',
+    'أعمال منزلية',
+  ];
   final List<String> filters = ['الكل', 'مكتملة', 'غير مكتملة'];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
 
     return Scaffold(
       appBar: const CustomAppBar(),

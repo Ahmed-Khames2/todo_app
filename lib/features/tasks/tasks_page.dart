@@ -81,6 +81,7 @@ class _TasksPageState extends State<TasksPage> {
     if (confirm == true) {
       for (var task in selectedTasks) {
         if (task.id != null) {
+          // ignore: use_build_context_synchronously
           context.read<TasksCubit>().deleteTask(task.id!);
         }
       }

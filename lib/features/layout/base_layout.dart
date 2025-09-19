@@ -18,29 +18,38 @@ class _BaseLayoutState extends State<BaseLayout> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: widget.pages[_currentIndex],
+      body:
+          // AnimatedSwitcher(
+          //   duration: const Duration(milliseconds: 400),
+          //   transitionBuilder: (child, animation) {
+          //     // Slide Animation
+          //     final offsetAnimation = Tween<Offset>(
+          //       begin: const Offset(0.2, 0.0),
+          //       end: Offset.zero,
+          //     ).animate(
+          //       CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+          //     );
+          //     return SlideTransition(
+          //       position: offsetAnimation,
+          //       child: FadeTransition(opacity: animation, child: child),
+          //     );
+          //   },
+          // child:
+          widget.pages[_currentIndex],
+      // ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(bottom: 8.h), // رفع بسيط من تحت
+        padding: EdgeInsets.only(bottom: 8.h),
         child: ConvexAppBar(
           backgroundColor: theme.colorScheme.primary,
           activeColor: Colors.white,
           color: theme.bottomNavigationBarTheme.unselectedItemColor,
           height: 55.h,
-          curveSize: 70.r, // حجم الانحناء responsive
+          curveSize: 70.r,
           style: TabStyle.react,
-          items: [
-            TabItem(
-              icon: Icons.home,
-              title: 'الرئيسية',
-            ),
-            TabItem(
-              icon: Icons.task,
-              title: 'المهام',
-            ),
-            TabItem(
-              icon: Icons.settings,
-              title: 'الإعدادات',
-            ),
+          items: const [
+            TabItem(icon: Icons.home, title: 'الرئيسية'),
+            TabItem(icon: Icons.task, title: 'المهام'),
+            TabItem(icon: Icons.settings, title: 'الإعدادات'),
           ],
           initialActiveIndex: _currentIndex,
           onTap: (index) {
