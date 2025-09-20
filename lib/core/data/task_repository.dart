@@ -1,14 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/core/data/app_database.dart';
 import 'package:todo_app/core/data/model/task_model.dart';
-
 class TaskRepository {
   // إضافة مهمة جديدة
   Future<int> addTask(TaskModel task) async {
     final db = await AppDatabase.database;
-    return await db.insert(//ex here 
+    return await db.insert(
       'tasks',
-      task.toMap(),
+      task.toMap(), // كده يشمل createdAt و scheduledTime لو موجود
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -25,7 +24,7 @@ class TaskRepository {
     final db = await AppDatabase.database;
     return await db.update(
       'tasks',
-      task.toMap(),
+      task.toMap(), // يشمل scheduledTime
       where: 'id = ?',
       whereArgs: [task.id],
     );

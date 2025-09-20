@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:todo_app/core/constant/app_constant.dart';
 import 'package:todo_app/core/cubit/tasks_cubit.dart';
 import 'package:todo_app/core/data/task_repository.dart';
@@ -11,6 +12,8 @@ import 'package:todo_app/features/addTask/logic/cubit/add_task_cubit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+    tz.initializeTimeZones();
+
 
   runApp(
     MultiBlocProvider(

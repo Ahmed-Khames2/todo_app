@@ -47,5 +47,15 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<!-- ✨ إذن الإشعارات -->
+		<key>NSUserNotificationUsageDescription</key>
+		<string>We use notifications to remind you about your tasks.</string>
+
+		<!-- ✨ تشغيل الإشعارات في الخلفية -->
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>remote-notification</string>
+		</array>
 	</dict>
 </plist>

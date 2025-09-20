@@ -16,7 +16,7 @@ class AppDatabase {
 
     return await openDatabase(
       path,
-      version: 2, // زودنا النسخة
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade, // ضفنا onUpgrade
     );
@@ -30,15 +30,19 @@ class AppDatabase {
         description TEXT,
         isDone INTEGER NOT NULL,
         category TEXT NOT NULL,
-        createdAt TEXT NOT NULL
+        createdAt TEXT NOT NULL,
+        scheduledTime TEXT
       )
     ''');
   }
 
-  static Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      // نضيف عمود description لو مش موجود
-      await db.execute('ALTER TABLE tasks ADD COLUMN description TEXT');
-    }
+ static Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  if (oldVersion < 2) {
+    await db.execute('ALTER TABLE tasks ADD COLUMN description TEXT');
   }
+  if (oldVersion < 3) {
+    await db.execute('ALTER TABLE tasks ADD COLUMN scheduledTime TEXT');
+  }
+}
+
 }

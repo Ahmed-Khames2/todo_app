@@ -1,3 +1,9 @@
+plugins {
+    id("com.android.application") version "8.7.0" apply false
+    id("com.android.library") apply false   // ✅ من غير version
+    id("org.jetbrains.kotlin.android") version "1.8.22" apply false
+}
+
 allprojects {
     repositories {
         google()

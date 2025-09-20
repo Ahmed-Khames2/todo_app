@@ -2,9 +2,11 @@ class TaskModel {
   final int? id;
   final String title;
   final String? description;
-  final DateTime date;
+  final DateTime date; // created at
   final bool isDone;
   final String category;
+
+  final DateTime? scheduledTime; // ← ميعاد تنفيذ المهمة (Notification)
 
   TaskModel({
     this.id,
@@ -13,6 +15,7 @@ class TaskModel {
     required this.date,
     this.isDone = false,
     required this.category,
+    this.scheduledTime, // جديد
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +26,7 @@ class TaskModel {
       'createdAt': date.toIso8601String(),
       'isDone': isDone ? 1 : 0,
       'category': category,
+      'scheduledTime': scheduledTime?.toIso8601String(), // جديد
     };
   }
 
@@ -34,6 +38,9 @@ class TaskModel {
       date: DateTime.parse(map['createdAt'] as String),
       isDone: (map['isDone'] as int) == 1,
       category: map['category'] as String,
+      scheduledTime: map['scheduledTime'] != null
+          ? DateTime.parse(map['scheduledTime'] as String)
+          : null, // جديد
     );
   }
 
@@ -44,6 +51,7 @@ class TaskModel {
     DateTime? date,
     bool? isDone,
     String? category,
+    DateTime? scheduledTime, // جديد
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -52,6 +60,7 @@ class TaskModel {
       date: date ?? this.date,
       isDone: isDone ?? this.isDone,
       category: category ?? this.category,
+      scheduledTime: scheduledTime ?? this.scheduledTime, // جديد
     );
   }
 }

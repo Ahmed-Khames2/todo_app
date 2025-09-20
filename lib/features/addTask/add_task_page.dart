@@ -32,13 +32,7 @@ class AddTaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (_) =>
-              AddTaskCubit()
-                ..changeTitle(editTask?.title ?? "")
-                ..changeDescription(editTask?.description ?? "")
-                ..changeDate(editTask?.date ?? DateTime.now())
-                ..changeCategory(editTask?.category ?? categories.first),
+      create: (_) => AddTaskCubit(editTask: editTask),
       child: BlocBuilder<AddTaskCubit, AddTaskState>(
         builder: (context, state) {
           final cubit = context.read<AddTaskCubit>();
@@ -47,15 +41,15 @@ class AddTaskPage extends StatelessWidget {
           return Scaffold(
             resizeToAvoidBottomInset: true,
             appBar: AppBar(
-              automaticallyImplyLeading:
-                  false, // ❌ يمنع ظهور زر الرجوع التلقائي
+              automaticallyImplyLeading: false,
               backgroundColor: Colors.transparent,
               elevation: 0,
               title: Text(
                 isEditing ? "تعديل المهمة" : "إضافة مهمة",
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               centerTitle: true,
             ),
@@ -86,7 +80,8 @@ class AddTaskPage extends StatelessWidget {
                   SizedBox(height: 20.h),
                   CustomDatePicker(
                     selectedDate: state.date,
-                    onTap: () async {
+                    selectedTime: state.scheduledTime,
+                    onSelectDate: () async {
                       final date = await showDatePicker(
                         context: context,
                         initialDate: state.date ?? DateTime.now(),
@@ -94,6 +89,23 @@ class AddTaskPage extends StatelessWidget {
                         lastDate: DateTime(2100),
                       );
                       if (date != null) cubit.changeDate(date);
+                    },
+                    onSelectTime: () async {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                      if (time != null) {
+                        final now = DateTime.now();
+                        final scheduledDateTime = DateTime(
+                          now.year,
+                          now.month,
+                          now.day,
+                          time.hour,
+                          time.minute,
+                        );
+                        cubit.changeScheduledTime(scheduledDateTime);
+                      }
                     },
                   ),
                   SizedBox(height: 30.h),
@@ -111,12 +123,12 @@ class AddTaskPage extends StatelessWidget {
                       }
 
                       final task = TaskModel(
-                        id:
-                            editTask?.id ??
+                        id: editTask?.id ??
                             DateTime.now().millisecondsSinceEpoch,
                         title: state.title,
                         description: state.description,
                         date: state.date!,
+                        scheduledTime: state.scheduledTime, // اختياري
                         category: state.category!,
                         isDone: editTask?.isDone ?? false,
                       );
