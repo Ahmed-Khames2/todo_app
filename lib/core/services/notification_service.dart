@@ -1,161 +1,83 @@
-// lib/features/tasks/services/notification_service.dart
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:timezone/data/latest.dart' as tz;
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _plugin =
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // === INIT: تهيئة المكتبة + ضبط التوقيت المحلي ===
-  static Future<void> init() async {
-    // 1. timezone init (ضروري للجدولة بدقة)
-    tzdata.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Africa/Cairo')); // أو أي لوكيشن حسب بلدك
+  Future<void> init() async {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
 
-    // 2. Android initialization settings
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // 3. iOS initialization
-    final iosInit = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    const InitializationSettings initSettings =
+        InitializationSettings(android: androidSettings);
 
-    final settings = InitializationSettings(android: androidInit, iOS: iosInit);
-
-    await _plugin.initialize(
-      settings,
-      onDidReceiveNotificationResponse: (response) {
-        // handle notification tap
-      },
-    );
-
-    // إنشاء قنوات أندرويد
-    await _createAndroidChannels();
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
   }
 
-  // === إنشاء قنوات أندرويد (channels) ===
-  static Future<void> _createAndroidChannels() async {
-    const taskChannel = AndroidNotificationChannel(
-      'task_channel',
-      'Task Notifications',
-      description: 'Notifications for task reminders',
-      importance: Importance.max,
-    );
-
-    const summaryChannel = AndroidNotificationChannel(
-      'summary_channel',
-      'Summary Notifications',
-      description: 'Daily summary of tasks',
-      importance: Importance.defaultImportance,
-    );
-
-    final androidPlugin =
-        _plugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-
-    if (androidPlugin != null) {
-      await androidPlugin.createNotificationChannel(taskChannel);
-      await androidPlugin.createNotificationChannel(summaryChannel);
-    }
-  }
-
-  // === إشعار فوري للتجربة ===
-  static Future<void> showTestNotification() async {
-    const details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        'task_channel',
-        'Task Notifications',
-        channelDescription: 'Channel for task reminders',
-        importance: Importance.max,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
-    );
-
-    await _plugin.show(
-      0,
-      'Test Notification',
-      'This is a test notification',
-      details,
-    );
-  }
-
-  // === جدولة إشعار في وقت محدد ===
-  static Future<void> scheduleNotification({
+  Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
-    required DateTime scheduledDate,
+    required DateTime scheduledTime,
   }) async {
-    final tz.TZDateTime scheduled = tz.TZDateTime.from(scheduledDate, tz.local);
+    final safeId = id % 2147483647;
 
-    // await _plugin.zonedSchedule(
-    //   id,
-    //   title,
-    //   body,
-    //   scheduled,
-    //   const NotificationDetails(
-    //     android: AndroidNotificationDetails(
-    //       'task_channel',
-    //       'Task Notifications',
-    //       channelDescription: 'Channel for task reminders',
-    //       importance: Importance.max,
-    //       priority: Priority.high,
-    //     ),
-    //     iOS: DarwinNotificationDetails(),
-    //   ),
-    //   androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    //   uiLocalNotificationDateInterpretation:
-    //       UILocalNotificationDateInterpretation.absoluteTime, // ✅ صح
-    // );
-  }
-
-  // === جدولة إشعار متكرر يومياً ===
-  static Future<void> scheduleDailySummary({
-    required int id,
-    required int hour,
-    required int minute,
-  }) async {
-    final now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduled = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minute,
+    final androidDetails = AndroidNotificationDetails(
+      'task_channel_id',
+      'Tasks Notifications',
+      channelDescription: 'Notifications for scheduled tasks',
+      importance: Importance.max,
+      priority: Priority.high,
     );
-    if (scheduled.isBefore(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
-    }
 
-    // await _plugin.zonedSchedule(
-    //   id,
-    //   'ملخص اليوم',
-    //   'تفاصيل إنجازاتك النهاردة',
-    //   scheduled,
-    //   const NotificationDetails(
-    //     android: AndroidNotificationDetails(
-    //       'summary_channel',
-    //       'Summary Notifications',
-    //       channelDescription: 'Daily summary',
-    //     ),
-    //     iOS: DarwinNotificationDetails(),
-    //   ),
-    //   androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    //   uiLocalNotificationDateInterpretation:
-    //       UILocalNotificationDateInterpretation.absoluteTime,
-    //   matchDateTimeComponents: DateTimeComponents.time,
-    // );
+    final notificationDetails = NotificationDetails(android: androidDetails);
+
+    tz.initializeTimeZones();
+    final tzDateTime = tz.TZDateTime.from(scheduledTime, tz.local);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      safeId,
+      title,
+      body,
+      tzDateTime,
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
   }
 
-  // === إلغاء إشعار معين ===
-  static Future<void> cancel(int id) async => _plugin.cancel(id);
+  Future<void> showNotification() async {
+    const androidDetails = AndroidNotificationDetails(
+      'channel_id_1',
+      'Basic Notifications',
+      channelDescription: 'Test basic notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
 
-  // === إلغاء كل الإشعارات ===
-  static Future<void> cancelAll() async => _plugin.cancelAll();
+    const notificationDetails = NotificationDetails(android: androidDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Basic Notification',
+      'Notification created by Ahmed',
+      notificationDetails,
+    );
+  }
+
+  Future<void> cancelNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  Future<void> cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
 }

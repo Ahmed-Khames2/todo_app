@@ -15,7 +15,7 @@ class AddTaskButton extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) =>  AddTaskPage()),
+            MaterialPageRoute(builder: (_) =>  AddTaskPageSimple()),
           );
         },
         backgroundColor: theme.colorScheme.primary,

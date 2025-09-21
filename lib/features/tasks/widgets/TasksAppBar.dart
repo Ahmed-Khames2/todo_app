@@ -67,7 +67,7 @@ class TasksAppBar extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AddTaskPage(editTask: task),
+                        builder: (_) => AddTaskPageSimple(editTask: task),
                       ),
                     // ignore: use_build_context_synchronously
                     ).then((_) => context.read<SelectionCubit>().clearSelection());

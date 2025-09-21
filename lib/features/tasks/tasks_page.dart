@@ -159,7 +159,7 @@ class _TasksPageState extends State<TasksPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => AddTaskPage(editTask: task),
+                                  builder: (_) => AddTaskPageSimple(editTask: task),
                                 ),
                               ).then((_) => clearSelection());
                             } else {

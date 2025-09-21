@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/cubit/tasks_cubit.dart';
+import 'package:todo_app/core/services/notification_service.dart';
 import 'package:todo_app/features/addTask/logic/cubit/add_task_cubit.dart';
 import 'package:todo_app/features/addTask/logic/cubit/add_task_state.dart';
 import 'package:todo_app/features/addTask/widgets/CustomButton.dart';
-import 'package:todo_app/features/addTask/widgets/CustomDatePicker.dart';
 import 'package:todo_app/features/addTask/widgets/CustomDropdown.dart';
 import 'package:todo_app/features/addTask/widgets/CustomTextField.dart';
 import 'package:todo_app/core/data/model/task_model.dart';
+import 'package:timezone/timezone.dart' as tz;
 
-class AddTaskPage extends StatelessWidget {
+class AddTaskPageSimple extends StatelessWidget {
   final TaskModel? editTask;
 
-  AddTaskPage({super.key, this.editTask});
+  AddTaskPageSimple({super.key, this.editTask});
 
   final List<String> categories = [
     'الكل',
@@ -46,10 +47,9 @@ class AddTaskPage extends StatelessWidget {
               elevation: 0,
               title: Text(
                 isEditing ? "تعديل المهمة" : "إضافة مهمة",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               centerTitle: true,
             ),
@@ -78,40 +78,72 @@ class AddTaskPage extends StatelessWidget {
                     onChanged: cubit.changeCategory,
                   ),
                   SizedBox(height: 20.h),
-                  CustomDatePicker(
-                    selectedDate: state.date,
-                    selectedTime: state.scheduledTime,
-                    onSelectDate: () async {
-                      final date = await showDatePicker(
-                        context: context,
-                        initialDate: state.date ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                      );
-                      if (date != null) cubit.changeDate(date);
-                    },
-                    onSelectTime: () async {
-                      final time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (time != null) {
-                        final now = DateTime.now();
-                        final scheduledDateTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          time.hour,
-                          time.minute,
-                        );
-                        cubit.changeScheduledTime(scheduledDateTime);
-                      }
-                    },
+
+                  // ===== تاريخ إنشاء المهمة =====
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: state.date ?? DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (date != null) cubit.changeDate(date);
+                          },
+                          child: Text(
+                            state.date != null
+                                ? 'تاريخ المهمة: ${state.date!.toLocal()}'
+                                    .split(' ')[0]
+                                : 'اختر تاريخ المهمة',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  // ===== وقت الإشعار =====
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (time != null && state.date != null) {
+                              DateTime scheduledDateTime = DateTime(
+                                state.date!.year,
+                                state.date!.month,
+                                state.date!.day,
+                                time.hour,
+                                time.minute,
+                              );
+                              if (scheduledDateTime.isBefore(DateTime.now())) {
+                                scheduledDateTime = scheduledDateTime.add(
+                                  const Duration(days: 1),
+                                );
+                              }
+                              cubit.changeScheduledTime(scheduledDateTime);
+                            }
+                          },
+                          child: Text(
+                            state.scheduledTime != null
+                                ? 'وقت التنبيه: ${state.scheduledTime!.hour.toString().padLeft(2, '0')}:${state.scheduledTime!.minute.toString().padLeft(2, '0')}'
+                                : 'اختر وقت التنبيه',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 30.h),
+
                   CustomButton(
                     text: "حفظ",
-                    onPressed: () {
+                    onPressed: () async {
                       if (state.title.isEmpty ||
                           state.description.isEmpty ||
                           state.date == null ||
@@ -123,12 +155,13 @@ class AddTaskPage extends StatelessWidget {
                       }
 
                       final task = TaskModel(
-                        id: editTask?.id ??
+                        id:
+                            editTask?.id ??
                             DateTime.now().millisecondsSinceEpoch,
                         title: state.title,
                         description: state.description,
                         date: state.date!,
-                        scheduledTime: state.scheduledTime, // اختياري
+                        scheduledTime: state.scheduledTime,
                         category: state.category!,
                         isDone: editTask?.isDone ?? false,
                       );
@@ -137,6 +170,15 @@ class AddTaskPage extends StatelessWidget {
                         context.read<TasksCubit>().updateTask(task);
                       } else {
                         context.read<TasksCubit>().addTask(task);
+                      }
+
+                      if (task.scheduledTime != null) {
+                        await NotificationService().scheduleNotification(
+                          id: task.id! % 2147483647,
+                          title: task.title,
+                          body: task.description!,
+                          scheduledTime: task.scheduledTime!,
+                        );
                       }
 
                       Navigator.pop(context);

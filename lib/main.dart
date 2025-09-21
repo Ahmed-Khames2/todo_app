@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
+// import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:todo_app/core/constant/app_constant.dart';
 import 'package:todo_app/core/cubit/tasks_cubit.dart';
 import 'package:todo_app/core/data/task_repository.dart';
 import 'package:todo_app/core/navigation/app_router.dart';
+import 'package:todo_app/core/services/notification_service.dart';
 import 'package:todo_app/core/theme/app_theme.dart';
 import 'package:todo_app/core/theme/bloc/theme_bloc.dart';
 import 'package:todo_app/features/addTask/logic/cubit/add_task_cubit.dart';
+// import 'package:timezone/timezone.dart' as tz;
 
-void main() {
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-    tz.initializeTimeZones();
+      await NotificationService().init();
+        // tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+
+
 
 
   runApp(
